@@ -1,0 +1,79 @@
+﻿using System;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using TMPro;
+
+public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
+{
+    public TextMeshProUGUI Name;
+    public TextMeshProUGUI Attack;
+    public TextMeshProUGUI Health;
+    public TextMeshProUGUI Defence;
+    public TextMeshProUGUI Cost;
+    public TextMeshProUGUI Description;
+
+    public HealthBarScript healthBar;
+    public DefenceBarScript defBar;
+
+    Archer arch = new Archer();
+    int ArcherId ;
+    string ArcherName ;
+    int ArcherHitPoints ;
+    int ArcherAttack ;
+    int ArcherDefence ;
+    int ArcherCost ;
+    string ArcherDescription;
+
+    private void Start()
+    {
+        ArcherId = arch.Id;
+        ArcherName = arch.Name;
+        ArcherHitPoints = arch.HitPoints;
+        ArcherAttack = arch.Attack;
+        ArcherDefence = arch.Defence;
+        ArcherCost = arch.Cost;
+        GetComponent<Spawner>().Cost = ArcherCost;
+        ArcherDescription = "Shoots another random unit with some chance";
+
+        healthBar.SetMaxHealth(ArcherHitPoints);
+        defBar.SetMaxHealth(ArcherDefence);
+    }
+    private void Update()
+    {
+        Name.text = ArcherName.ToString();
+        Attack.text = ArcherAttack.ToString();
+        Health.text = ArcherHitPoints.ToString();
+        Defence.text = ArcherDefence.ToString();
+        Cost.text = ArcherCost.ToString();
+        Description.text = ArcherDescription.ToString();
+
+        healthBar.SetHealth(ArcherHitPoints);
+        defBar.SetHealth(ArcherDefence);
+    }
+
+
+    F_Archer fabric = new F_Archer();
+
+    
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        //ArrayUnits units = new ArrayUnits();
+        
+        CardScr card = GetComponent<CardScr>();
+        if (card.isDropped)
+        {
+            SlotScript slot = GetComponentInParent<SlotScript>();
+            GameObject.Find("Array").GetComponent<ArrayUnits>().units[slot.cellX, slot.cellY] = fabric.Create();
+            //units.units[slot.cellX, slot.cellY] = fabric.Create();
+            SpendMoneyEvent sme = new SpendMoneyEvent();
+            sme.OnSpendMoney(ArcherCost);
+        }
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        LocalCostScript lc = GameObject.Find("LocalCost").GetComponent<LocalCostScript>();
+        lc.cost = ArcherCost;
+    }
+}
+
