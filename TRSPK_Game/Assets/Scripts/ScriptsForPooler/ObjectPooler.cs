@@ -27,7 +27,9 @@ public class ObjectPooler : MonoBehaviour
             {
                 GameObject obj = Instantiate(pool.prefab);
                 obj.SetActive(false);
+                obj.transform.SetParent(GameObject.Find("ObjectPooler").transform);
                 objectPool.Enqueue(obj);
+
             }
             poolDictionary.Add(pool.tag, objectPool);
         }
@@ -68,7 +70,7 @@ public class ObjectPooler : MonoBehaviour
         objToDelete.transform.position = new Vector3(0, 0, 0);
         //objToDelete.transform.rotation = new Quaternion(0, 0, 0, 0);
         //objToDelete.transform.parent = null;
-        objToDelete.transform.SetParent(null);
+        objToDelete.transform.SetParent(GameObject.Find("ObjectPooler").transform);
 
         IPooledObject pooledObject = objToDelete.GetComponent<IPooledObject>();
         if (pooledObject != null)

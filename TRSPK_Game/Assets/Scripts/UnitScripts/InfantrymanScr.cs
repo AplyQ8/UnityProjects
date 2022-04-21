@@ -23,8 +23,9 @@ public class InfantrymanScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
     int InfantrymanCost;
     string InfantrymanDescription;
         
-    private void Start()
+    private void Awake()
     {
+        TakeDamageEvents.TDE += TakeDamage;
         InfantrymanId = inf.Id;
         InfantrymanName = inf.Name;
         InfantrymanHitPoints = inf.HitPoints;
@@ -32,6 +33,10 @@ public class InfantrymanScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         InfantrymanDefence = inf.Defence;
         InfantrymanCost = inf.Cost;
         GetComponent<Spawner>().Cost = InfantrymanCost;
+        GetComponent<Spawner>().Attack = InfantrymanAttack;
+        GetComponent<Spawner>().HP = InfantrymanHitPoints;
+        GetComponent<Spawner>().Defence = InfantrymanDefence;
+
 
         InfantrymanDescription = "Buffes nearby Knights with some chance";
 
@@ -49,7 +54,10 @@ public class InfantrymanScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Cost.text = InfantrymanCost.ToString();
         Description.text = InfantrymanDescription.ToString();
 
-        
+        InfantrymanHitPoints = GetComponent<Spawner>().HP;
+        InfantrymanDefence = GetComponent<Spawner>().Defence;
+
+
         healthBar.SetHealth(InfantrymanHitPoints);
         defBar.SetHealth(InfantrymanDefence);
     }
@@ -84,5 +92,19 @@ public class InfantrymanScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
     {
         LocalCostScript lc = GameObject.Find("LocalCost").GetComponent<LocalCostScript>();
         lc.cost = InfantrymanCost;
+    }
+    public void TakeDamage(object sender, TakeDamageEventsArgs e)
+    {
+        if (GetComponent<Spawner>().isInFight)
+        {
+            if (InfantrymanDefence > 0)
+            {
+                InfantrymanDefence -= e.Attack;
+            }
+            else
+            {
+                InfantrymanHitPoints -= e.Attack;
+            }
+        }
     }
 }

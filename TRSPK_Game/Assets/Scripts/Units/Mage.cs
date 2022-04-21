@@ -8,9 +8,9 @@ public class Mage : IUnit
 {
     int MageId = 3;
     string MageName = "Mage";
-    int MageHitPoints = 55;
-    int MageAttack = 50;
-    int MageDefence = 55;
+    int MageHitPoints = 25;
+    int MageAttack = 70;
+    int MageDefence = 20;
     int MageCost = 60;
     public int Id { get { return MageId; } set { MageId = value; } }
     public string Name { get { return MageName; } set { MageName = value; } }

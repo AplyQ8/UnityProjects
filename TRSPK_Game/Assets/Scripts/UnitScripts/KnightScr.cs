@@ -27,8 +27,9 @@ public class KnightScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
     int KnightCost;
     string KnightDescription;
 
-    private void Start()
+    private void Awake()
     {
+        TakeDamageEvents.TDE += TakeDamage;
         KnightId = knight.Id;
         KnightName = knight.Name;
         KnightHitPoints = knight.HitPoints;
@@ -36,6 +37,9 @@ public class KnightScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         KnightDefence = knight.Defence;
         KnightCost = knight.Cost;
         GetComponent<Spawner>().Cost = KnightCost;
+        GetComponent<Spawner>().Attack = KnightAttack;
+        GetComponent<Spawner>().HP = KnightHitPoints;
+        GetComponent<Spawner>().Defence = KnightDefence;
 
         KnightDescription = "Can be buffed by nearby warriors";
 
@@ -51,6 +55,9 @@ public class KnightScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Defence.text = KnightDefence.ToString();
         Cost.text = KnightCost.ToString();
         Description.text = KnightDescription.ToString();
+
+        KnightHitPoints = GetComponent<Spawner>().HP;
+        KnightDefence = GetComponent<Spawner>().Defence;
 
         healthBar.SetHealth(KnightHitPoints);
         defBar.SetHealth(KnightDefence);
@@ -78,5 +85,19 @@ public class KnightScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
     {
         LocalCostScript lc = GameObject.Find("LocalCost").GetComponent<LocalCostScript>();
         lc.cost = KnightCost;
+    }
+    public void TakeDamage(object sender, TakeDamageEventsArgs e)
+    {
+        if (GetComponent<Spawner>().isInFight)
+        {
+            if (KnightDefence > 0)
+            {
+                KnightDefence -= e.Attack;
+            }
+            else
+            {
+                KnightHitPoints -= e.Attack;
+            }
+        }
     }
 }

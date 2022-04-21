@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-abstract public class FactoryUnits : MonoBehaviour
+abstract public class FactoryUnits
 {
     public FactoryUnits()
     {

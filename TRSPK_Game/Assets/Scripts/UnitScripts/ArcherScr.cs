@@ -24,8 +24,9 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
     int ArcherCost ;
     string ArcherDescription;
 
-    private void Start()
+    private void Awake()
     {
+        TakeDamageEvents.TDE += TakeDamage;
         ArcherId = arch.Id;
         ArcherName = arch.Name;
         ArcherHitPoints = arch.HitPoints;
@@ -33,6 +34,10 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
         ArcherDefence = arch.Defence;
         ArcherCost = arch.Cost;
         GetComponent<Spawner>().Cost = ArcherCost;
+        GetComponent<Spawner>().Attack = ArcherAttack;
+        GetComponent<Spawner>().HP = ArcherHitPoints;
+        GetComponent<Spawner>().Defence = ArcherDefence;
+
         ArcherDescription = "Shoots another random unit with some chance";
 
         healthBar.SetMaxHealth(ArcherHitPoints);
@@ -46,6 +51,9 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Defence.text = ArcherDefence.ToString();
         Cost.text = ArcherCost.ToString();
         Description.text = ArcherDescription.ToString();
+
+        ArcherHitPoints = GetComponent<Spawner>().HP;
+        ArcherDefence = GetComponent<Spawner>().Defence;
 
         healthBar.SetHealth(ArcherHitPoints);
         defBar.SetHealth(ArcherDefence);
@@ -74,6 +82,20 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
     {
         LocalCostScript lc = GameObject.Find("LocalCost").GetComponent<LocalCostScript>();
         lc.cost = ArcherCost;
+    }
+    public void TakeDamage(object sender, TakeDamageEventsArgs e)
+    {
+        if (GetComponent<Spawner>().isInFight)
+        {
+            if (ArcherDefence > 0)
+            {
+                ArcherDefence -= e.Attack;
+            }
+            else
+            {
+                ArcherHitPoints -= e.Attack;
+            }
+        }
     }
 }
 

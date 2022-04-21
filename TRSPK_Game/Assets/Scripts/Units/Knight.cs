@@ -8,8 +8,8 @@ public class Knight : IUnit
 {
     int KnightId = 5;
     string KnightName = "Knight";
-    int KnightHitPoints = 70;
-    int KnightAttack = 55;
+    int KnightHitPoints = 45;
+    int KnightAttack = 45;
     int KnightDefence = 70;
     int KnightCost = 60;
     public int Id { get { return KnightId; } set { KnightId = value; } }

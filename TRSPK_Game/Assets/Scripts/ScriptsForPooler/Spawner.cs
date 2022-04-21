@@ -4,16 +4,21 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    ObjectPooler objectPooler;
+    public ObjectPooler objectPooler;
     public string unitName;
     public int Cost;
-    public int index;
+    public int Attack;
+    public int HP;
+    public int Defence;
+    public bool isInFight = false;
+    
     //public int health;
     
 
-    private void Start()
+    public void Awake()
     {
-        objectPooler = ObjectPooler.Instance;
+        objectPooler = GameObject.Find("ObjectPooler").GetComponent<ObjectPooler>();
+        
     }
 
     public void Spawn()

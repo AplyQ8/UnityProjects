@@ -5,14 +5,18 @@ using UnityEngine.UI;
 
 public class money : MonoBehaviour
 {
+    public int origMoney;
     public int AmountOfMoney;
+    
     public Text AmountOfMoneyText;
     public bool isEnough;
     private void Start()
     {
-      
+
+        
         SpendMoneyEvent.SME += SpendMoney;
         AmountOfMoneyText.text = AmountOfMoney.ToString();
+        origMoney = AmountOfMoney;
         
     }
     private void Update()

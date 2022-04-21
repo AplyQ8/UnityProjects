@@ -28,8 +28,9 @@ public class PriestScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
     int PriestCost;
     string PriestDescription;
 
-    private void Start()
+    private void Awake()
     {
+        TakeDamageEvents.TDE += TakeDamage;
         PriestId = priest.Id;
         PriestName = priest.Name;
         PriestHitPoints = priest.HitPoints;
@@ -37,6 +38,9 @@ public class PriestScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         PriestDefence = priest.Defence;
         PriestCost = priest.Cost;
         GetComponent<Spawner>().Cost = PriestCost;
+        GetComponent<Spawner>().Attack = PriestAttack;
+        GetComponent<Spawner>().HP = PriestHitPoints;
+        GetComponent<Spawner>().Defence = PriestDefence;
 
         PriestDescription = "Heal nearby units with some chance";
 
@@ -52,6 +56,9 @@ public class PriestScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Defence.text = PriestDefence.ToString();
         Cost.text = PriestCost.ToString();
         Description.text = PriestDescription.ToString();
+
+        PriestHitPoints = GetComponent<Spawner>().HP;
+        PriestDefence = GetComponent<Spawner>().Defence;
 
         healthBar.SetHealth(PriestHitPoints);
         defBar.SetHealth(PriestDefence);
@@ -78,5 +85,19 @@ public class PriestScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
     {
         LocalCostScript lc = GameObject.Find("LocalCost").GetComponent<LocalCostScript>();
         lc.cost = PriestCost;
+    }
+    public void TakeDamage(object sender, TakeDamageEventsArgs e)
+    {
+        if (GetComponent<Spawner>().isInFight)
+        {
+            if (PriestDefence > 0)
+            {
+                PriestDefence -= e.Attack;
+            }
+            else
+            {
+                PriestHitPoints -= e.Attack;
+            }
+        }
     }
 }

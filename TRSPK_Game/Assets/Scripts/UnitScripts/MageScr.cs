@@ -27,8 +27,9 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
     int MageCost;
     string MageDescription;
 
-    private void Start()
+    private void Awake()
     {
+        TakeDamageEvents.TDE += TakeDamage;
         MageId = mage.Id;
         MageName = mage.Name;
         MageHitPoints = mage.HitPoints;
@@ -36,6 +37,9 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         MageDefence = mage.Defence;
         MageCost = mage.Cost;
         GetComponent<Spawner>().Cost = MageCost;
+        GetComponent<Spawner>().Attack = MageAttack;
+        GetComponent<Spawner>().HP = MageHitPoints;
+        GetComponent<Spawner>().Defence = MageDefence;
 
         MageDescription = "Clone nearby units with some chance";
 
@@ -51,6 +55,9 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Defence.text = MageDefence.ToString();
         Cost.text = MageCost.ToString();
         Description.text = MageDescription.ToString();
+
+        MageHitPoints = GetComponent<Spawner>().HP;
+        MageDefence = GetComponent<Spawner>().Defence;
 
         healthBar.SetHealth(MageHitPoints);
         defBar.SetHealth(MageDefence);
@@ -77,5 +84,19 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
     {
         LocalCostScript lc = GameObject.Find("LocalCost").GetComponent<LocalCostScript>();
         lc.cost = MageCost;
+    }
+    public void TakeDamage(object sender, TakeDamageEventsArgs e)
+    {
+        if (GetComponent<Spawner>().isInFight)
+        {
+            if (MageDefence > 0)
+            {
+                MageDefence -= e.Attack;
+            }
+            else
+            {
+                MageHitPoints -= e.Attack;
+            }
+        }
     }
 }

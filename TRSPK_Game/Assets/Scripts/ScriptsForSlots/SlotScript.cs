@@ -10,11 +10,20 @@ public class SlotScript : MonoBehaviour, IDropHandler
     public bool isBusy = false;
     //public int localCost;
 
+    /*private void Start()
+    {
+        Debug.Log(transform.GetChild(0));
+    }*/
+
     private void Update()
     {
         if(transform.childCount == 0)
         {
             isBusy = false;
+        }
+        else
+        {
+            isBusy = true;
         }
     }
 
