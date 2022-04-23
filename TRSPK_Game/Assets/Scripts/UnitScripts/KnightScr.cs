@@ -18,6 +18,7 @@ public class KnightScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
 
     Knight knight = new Knight();
     F_Knight fabric = new F_Knight();
+    ActionScript Action;
 
     int KnightId;
     string KnightName;
@@ -29,7 +30,7 @@ public class KnightScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
 
     private void Awake()
     {
-        TakeDamageEvents.TDE += TakeDamage;
+        Action = GetComponent<ActionScript>();
         KnightId = knight.Id;
         KnightName = knight.Name;
         KnightHitPoints = knight.HitPoints;
@@ -39,7 +40,9 @@ public class KnightScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         GetComponent<Spawner>().Cost = KnightCost;
         GetComponent<Spawner>().Attack = KnightAttack;
         GetComponent<Spawner>().HP = KnightHitPoints;
-        GetComponent<Spawner>().Defence = KnightDefence;
+        
+        Action.currentDefence = KnightDefence;
+        Action.currentHealth = KnightHitPoints;
 
         KnightDescription = "Can be buffed by nearby warriors";
 
@@ -56,9 +59,9 @@ public class KnightScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Cost.text = KnightCost.ToString();
         Description.text = KnightDescription.ToString();
 
-        KnightHitPoints = GetComponent<Spawner>().HP;
-        KnightDefence = GetComponent<Spawner>().Defence;
-
+        
+        
+        
         healthBar.SetHealth(KnightHitPoints);
         defBar.SetHealth(KnightDefence);
 
@@ -86,18 +89,30 @@ public class KnightScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         LocalCostScript lc = GameObject.Find("LocalCost").GetComponent<LocalCostScript>();
         lc.cost = KnightCost;
     }
-    public void TakeDamage(object sender, TakeDamageEventsArgs e)
+    public void TakeDamage(int damage)
     {
-        if (GetComponent<Spawner>().isInFight)
+        if (KnightDefence > 0)
         {
-            if (KnightDefence > 0)
-            {
-                KnightDefence -= e.Attack;
-            }
-            else
-            {
-                KnightHitPoints -= e.Attack;
-            }
+            KnightDefence = Action.currentDefence;
+            GetComponent<Spawner>().Defence = KnightDefence;
         }
+        else
+        {
+            KnightHitPoints = Action.currentHealth;
+            GetComponent<Spawner>().HP = KnightHitPoints;
+        }
+    }
+    private void OnEnable() {
+        Action.Damage += TakeDamage;
+        Action.Killed += Kill;
+    }
+    private void OnDisable() {
+        Action.Damage -= TakeDamage;
+        Action.Killed -= Kill;
+    }
+    public void Kill()
+    {
+        gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 }

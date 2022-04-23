@@ -15,6 +15,9 @@ public class InfantrymanScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
     public DefenceBarScript defBar;
 
     Infantryman inf = new Infantryman();
+    ActionScript Action;
+
+
     int InfantrymanId;
     string InfantrymanName;
     int InfantrymanHitPoints;
@@ -25,7 +28,7 @@ public class InfantrymanScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         
     private void Awake()
     {
-        TakeDamageEvents.TDE += TakeDamage;
+        Action = GetComponent<ActionScript>();
         InfantrymanId = inf.Id;
         InfantrymanName = inf.Name;
         InfantrymanHitPoints = inf.HitPoints;
@@ -35,8 +38,8 @@ public class InfantrymanScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         GetComponent<Spawner>().Cost = InfantrymanCost;
         GetComponent<Spawner>().Attack = InfantrymanAttack;
         GetComponent<Spawner>().HP = InfantrymanHitPoints;
-        GetComponent<Spawner>().Defence = InfantrymanDefence;
-
+        Action.currentDefence = InfantrymanDefence;
+        Action.currentHealth = InfantrymanHitPoints;
 
         InfantrymanDescription = "Buffes nearby Knights with some chance";
 
@@ -54,9 +57,9 @@ public class InfantrymanScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Cost.text = InfantrymanCost.ToString();
         Description.text = InfantrymanDescription.ToString();
 
-        InfantrymanHitPoints = GetComponent<Spawner>().HP;
-        InfantrymanDefence = GetComponent<Spawner>().Defence;
-
+        
+        
+        
 
         healthBar.SetHealth(InfantrymanHitPoints);
         defBar.SetHealth(InfantrymanDefence);
@@ -93,18 +96,30 @@ public class InfantrymanScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         LocalCostScript lc = GameObject.Find("LocalCost").GetComponent<LocalCostScript>();
         lc.cost = InfantrymanCost;
     }
-    public void TakeDamage(object sender, TakeDamageEventsArgs e)
+    public void TakeDamage(int damage)
     {
-        if (GetComponent<Spawner>().isInFight)
+        if (InfantrymanDefence > 0)
         {
-            if (InfantrymanDefence > 0)
-            {
-                InfantrymanDefence -= e.Attack;
-            }
-            else
-            {
-                InfantrymanHitPoints -= e.Attack;
-            }
+            InfantrymanDefence = Action.currentDefence;
+            GetComponent<Spawner>().Defence = InfantrymanDefence;
         }
+        else
+        {
+            InfantrymanHitPoints = Action.currentHealth;
+            GetComponent<Spawner>().HP = InfantrymanHitPoints;
+        }
+    }
+    private void OnEnable() {
+        Action.Damage += TakeDamage;
+        Action.Killed += Kill;
+    }
+    private void OnDisable() {
+        Action.Damage -= TakeDamage;
+        Action.Killed -= Kill;
+    }
+    public void Kill()
+    {
+        gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 }

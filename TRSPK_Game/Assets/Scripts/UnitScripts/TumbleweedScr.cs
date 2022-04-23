@@ -19,6 +19,7 @@ public class TumbleweedScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
 
     TumbleWeed tw = new TumbleWeed();
     F_Tumbleweed fabric = new F_Tumbleweed();
+    ActionScript Action;
 
     int TumbleWeedId;
     string TumbleWeedName;
@@ -30,7 +31,7 @@ public class TumbleweedScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
 
     private void Awake()
     {
-        TakeDamageEvents.TDE += TakeDamage;
+        Action = GetComponent<ActionScript>();
         TumbleWeedId = tw.Id;
         TumbleWeedName = tw.Name;
         TumbleWeedHitPoints = tw.HitPoints;
@@ -40,7 +41,9 @@ public class TumbleweedScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         GetComponent<Spawner>().Cost = TumbleWeedCost;
         GetComponent<Spawner>().Attack = TumbleWeedAttack;
         GetComponent<Spawner>().HP = TumbleWeedHitPoints;
-        GetComponent<Spawner>().Defence = TumbleWeedDefence;
+        
+        Action.currentDefence = TumbleWeedDefence;
+        Action.currentHealth = TumbleWeedHitPoints;
 
         TumbleWeedDescription = "Heavy unit with no attack";
 
@@ -57,8 +60,8 @@ public class TumbleweedScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Cost.text = TumbleWeedCost.ToString();
         Description.text = TumbleWeedDescription.ToString();
 
-        TumbleWeedHitPoints = GetComponent<Spawner>().HP;
-        TumbleWeedDefence = GetComponent<Spawner>().Defence;
+        
+        
 
         healthBar.SetHealth(TumbleWeedHitPoints);
         defBar.SetHealth(TumbleWeedDefence);
@@ -87,18 +90,31 @@ public class TumbleweedScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         LocalCostScript lc = GameObject.Find("LocalCost").GetComponent<LocalCostScript>();
         lc.cost = TumbleWeedCost;
     }
-    public void TakeDamage(object sender, TakeDamageEventsArgs e)
+    public void TakeDamage(int damage)
     {
-        if (GetComponent<Spawner>().isInFight)
+        if (TumbleWeedDefence > 0)
         {
-            if (TumbleWeedDefence > 0)
-            {
-                TumbleWeedDefence -= e.Attack;
-            }
-            else
-            {
-                TumbleWeedHitPoints -= e.Attack;
-            }
+            TumbleWeedDefence = Action.currentDefence;
+            GetComponent<Spawner>().Defence = TumbleWeedDefence;
+        }            
+        else
+        {
+            TumbleWeedHitPoints = Action.currentHealth;
+            GetComponent<Spawner>().HP = TumbleWeedHitPoints;
+            
         }
+    }
+    private void OnEnable() {
+        Action.Damage += TakeDamage;
+        Action.Killed += Kill;
+    }
+    private void OnDisable() {
+        Action.Damage -= TakeDamage;
+        Action.Killed -= Kill;
+    }
+    public void Kill()
+    {
+        gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 }

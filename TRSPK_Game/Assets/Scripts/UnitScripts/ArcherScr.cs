@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
+using System.Collections.Generic;
 
 public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
 {
@@ -16,6 +17,8 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
     public DefenceBarScript defBar;
 
     Archer arch = new Archer();
+    ActionScript Action;
+
     int ArcherId ;
     string ArcherName ;
     int ArcherHitPoints ;
@@ -26,7 +29,8 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
 
     private void Awake()
     {
-        TakeDamageEvents.TDE += TakeDamage;
+        Action = GetComponent<ActionScript>();
+        
         ArcherId = arch.Id;
         ArcherName = arch.Name;
         ArcherHitPoints = arch.HitPoints;
@@ -36,7 +40,9 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
         GetComponent<Spawner>().Cost = ArcherCost;
         GetComponent<Spawner>().Attack = ArcherAttack;
         GetComponent<Spawner>().HP = ArcherHitPoints;
-        GetComponent<Spawner>().Defence = ArcherDefence;
+        
+        Action.currentDefence = ArcherDefence;
+        Action.currentHealth = ArcherHitPoints;
 
         ArcherDescription = "Shoots another random unit with some chance";
 
@@ -52,8 +58,8 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Cost.text = ArcherCost.ToString();
         Description.text = ArcherDescription.ToString();
 
-        ArcherHitPoints = GetComponent<Spawner>().HP;
-        ArcherDefence = GetComponent<Spawner>().Defence;
+        
+        
 
         healthBar.SetHealth(ArcherHitPoints);
         defBar.SetHealth(ArcherDefence);
@@ -83,19 +89,61 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
         LocalCostScript lc = GameObject.Find("LocalCost").GetComponent<LocalCostScript>();
         lc.cost = ArcherCost;
     }
-    public void TakeDamage(object sender, TakeDamageEventsArgs e)
+    public void TakeDamage(int damage)
     {
-        if (GetComponent<Spawner>().isInFight)
+        if (ArcherDefence > 0)
         {
-            if (ArcherDefence > 0)
-            {
-                ArcherDefence -= e.Attack;
-            }
-            else
-            {
-                ArcherHitPoints -= e.Attack;
-            }
+            ArcherDefence = Action.currentDefence;
+            GetComponent<Spawner>().Defence = ArcherDefence;
+            
         }
+        else
+        {
+            ArcherHitPoints = Action.currentHealth;
+            GetComponent<Spawner>().HP = ArcherHitPoints;
+        }
+    }
+
+    private void OnEnable() {
+        Action.Damage += TakeDamage;
+        Action.Killed += Kill;
+        Action.SpecAction += Ultimate;
+        
+    }
+    private void OnDisable() {
+        Action.Damage -= TakeDamage;
+        Action.Killed -= Kill;
+        Action.SpecAction -= Ultimate;
+    }
+
+    public void Kill()
+    {
+        gameObject.SetActive(false);
+        Destroy(gameObject);
+    }
+    public void Ultimate(GameObject field, GameObject enemyField)
+    {
+        System.Random rand = new System.Random();
+        int coin = rand.Next(0, 101);
+        if(coin > 50)
+        {
+            List<GameObject> units = new List<GameObject>();
+            for(int i = 0; i < enemyField.transform.childCount; i++)
+            {
+                if(enemyField.transform.GetChild(i).transform.childCount > 0)
+                {
+                    units.Add(enemyField.transform.GetChild(i).GetChild(0).gameObject);
+                }
+            }
+            GameObject unit = units[rand.Next(0, units.Count)];
+            ActionScript enemyAction = unit.GetComponent<ActionScript>();
+            enemyAction?.TakeDamage(ArcherAttack);
+            Debug.Log($"Archers action was activated and dealed {ArcherAttack} damage a {unit.GetComponent<Spawner>().unitName}");
+
+            units.Clear();
+        }
+
+        
     }
 }
 

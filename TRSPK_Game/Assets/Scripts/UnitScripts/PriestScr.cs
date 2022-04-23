@@ -19,6 +19,7 @@ public class PriestScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
 
     Priest priest = new Priest();
     F_Priest fabric = new F_Priest();
+    ActionScript Action;
 
     int PriestId;
     string PriestName;
@@ -30,7 +31,7 @@ public class PriestScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
 
     private void Awake()
     {
-        TakeDamageEvents.TDE += TakeDamage;
+        Action = GetComponent<ActionScript>();
         PriestId = priest.Id;
         PriestName = priest.Name;
         PriestHitPoints = priest.HitPoints;
@@ -40,7 +41,9 @@ public class PriestScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         GetComponent<Spawner>().Cost = PriestCost;
         GetComponent<Spawner>().Attack = PriestAttack;
         GetComponent<Spawner>().HP = PriestHitPoints;
-        GetComponent<Spawner>().Defence = PriestDefence;
+        
+        Action.currentDefence = PriestDefence;
+        Action.currentHealth = PriestHitPoints;
 
         PriestDescription = "Heal nearby units with some chance";
 
@@ -56,9 +59,9 @@ public class PriestScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Defence.text = PriestDefence.ToString();
         Cost.text = PriestCost.ToString();
         Description.text = PriestDescription.ToString();
-
-        PriestHitPoints = GetComponent<Spawner>().HP;
-        PriestDefence = GetComponent<Spawner>().Defence;
+        
+        
+        
 
         healthBar.SetHealth(PriestHitPoints);
         defBar.SetHealth(PriestDefence);
@@ -86,18 +89,34 @@ public class PriestScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         LocalCostScript lc = GameObject.Find("LocalCost").GetComponent<LocalCostScript>();
         lc.cost = PriestCost;
     }
-    public void TakeDamage(object sender, TakeDamageEventsArgs e)
+    public void TakeDamage(int damage)
     {
-        if (GetComponent<Spawner>().isInFight)
+        if (PriestDefence > 0)
         {
-            if (PriestDefence > 0)
-            {
-                PriestDefence -= e.Attack;
-            }
-            else
-            {
-                PriestHitPoints -= e.Attack;
-            }
+            PriestDefence = Action.currentDefence;
+            GetComponent<Spawner>().Defence = PriestDefence;
         }
+        else
+        {
+            PriestHitPoints = Action.currentHealth;
+            GetComponent<Spawner>().HP = PriestHitPoints;
+        }
+    }
+    private void OnEnable() {
+        Action.Damage += TakeDamage;
+        Action.Killed += Kill;
+    }
+    private void OnDisable() {
+        Action.Damage -= TakeDamage;
+        Action.Killed -= Kill;
+    }
+    public void Kill()
+    {
+        gameObject.SetActive(false);
+        Destroy(gameObject);
+    }
+    public void Ultimate(GameObject field, GameObject enemyField)
+    {
+        
     }
 }

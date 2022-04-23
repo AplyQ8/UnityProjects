@@ -18,6 +18,7 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
 
     Mage mage = new Mage();
     F_Mage fabric = new F_Mage();
+    ActionScript Action;
 
     int MageId;
     string MageName;
@@ -29,7 +30,7 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
 
     private void Awake()
     {
-        TakeDamageEvents.TDE += TakeDamage;
+        Action = GetComponent<ActionScript>();
         MageId = mage.Id;
         MageName = mage.Name;
         MageHitPoints = mage.HitPoints;
@@ -39,7 +40,9 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         GetComponent<Spawner>().Cost = MageCost;
         GetComponent<Spawner>().Attack = MageAttack;
         GetComponent<Spawner>().HP = MageHitPoints;
-        GetComponent<Spawner>().Defence = MageDefence;
+        
+        Action.currentDefence = MageDefence;
+        Action.currentHealth = MageHitPoints;
 
         MageDescription = "Clone nearby units with some chance";
 
@@ -56,8 +59,8 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Cost.text = MageCost.ToString();
         Description.text = MageDescription.ToString();
 
-        MageHitPoints = GetComponent<Spawner>().HP;
-        MageDefence = GetComponent<Spawner>().Defence;
+        
+        
 
         healthBar.SetHealth(MageHitPoints);
         defBar.SetHealth(MageDefence);
@@ -85,18 +88,36 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         LocalCostScript lc = GameObject.Find("LocalCost").GetComponent<LocalCostScript>();
         lc.cost = MageCost;
     }
-    public void TakeDamage(object sender, TakeDamageEventsArgs e)
+    public void TakeDamage(int damage)
     {
-        if (GetComponent<Spawner>().isInFight)
+        if (MageDefence > 0)
         {
-            if (MageDefence > 0)
-            {
-                MageDefence -= e.Attack;
-            }
-            else
-            {
-                MageHitPoints -= e.Attack;
-            }
+            MageDefence = Action.currentDefence;
+            GetComponent<Spawner>().Defence = MageDefence;
         }
+        else
+        {
+            MageHitPoints = Action.currentHealth;
+            GetComponent<Spawner>().HP = MageHitPoints;
+        }
+    }
+    private void OnEnable() {
+        Action.Damage += TakeDamage;
+        Action.Killed += Kill;
+        Action.SpecAction += Ultimate;
+    }
+    private void OnDisable() {
+        Action.Damage -= TakeDamage;
+        Action.Killed -= Kill;
+        Action.SpecAction -= Ultimate;
+    }
+    public void Kill()
+    {
+        gameObject.SetActive(false);
+        Destroy(gameObject);
+    }
+    public void Ultimate(GameObject field, GameObject enemyField)
+    {
+        
     }
 }
