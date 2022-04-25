@@ -40,6 +40,7 @@ public class KnightScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         GetComponent<Spawner>().Cost = KnightCost;
         GetComponent<Spawner>().Attack = KnightAttack;
         GetComponent<Spawner>().HP = KnightHitPoints;
+        GetComponent<Spawner>().Defence = KnightDefence;
         
         Action.currentDefence = KnightDefence;
         Action.currentHealth = KnightHitPoints;
@@ -58,10 +59,8 @@ public class KnightScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Defence.text = KnightDefence.ToString();
         Cost.text = KnightCost.ToString();
         Description.text = KnightDescription.ToString();
-
-        
-        
-        
+        KnightDefence = GetComponent<Spawner>().Defence;
+        KnightHitPoints = GetComponent<Spawner>().HP;
         healthBar.SetHealth(KnightHitPoints);
         defBar.SetHealth(KnightDefence);
 
@@ -93,12 +92,15 @@ public class KnightScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
     {
         if (KnightDefence > 0)
         {
-            KnightDefence = Action.currentDefence;
+            //KnightDefence = Action.currentDefence;
+            KnightDefence -= damage;
             GetComponent<Spawner>().Defence = KnightDefence;
         }
         else
         {
-            KnightHitPoints = Action.currentHealth;
+            //KnightHitPoints = Action.currentHealth;
+            KnightHitPoints -= damage;
+            Action.currentHealth = KnightHitPoints;
             GetComponent<Spawner>().HP = KnightHitPoints;
         }
     }

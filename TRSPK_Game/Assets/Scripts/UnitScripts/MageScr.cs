@@ -40,6 +40,7 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         GetComponent<Spawner>().Cost = MageCost;
         GetComponent<Spawner>().Attack = MageAttack;
         GetComponent<Spawner>().HP = MageHitPoints;
+        GetComponent<Spawner>().Defence = MageDefence;
         
         Action.currentDefence = MageDefence;
         Action.currentHealth = MageHitPoints;
@@ -58,10 +59,8 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Defence.text = MageDefence.ToString();
         Cost.text = MageCost.ToString();
         Description.text = MageDescription.ToString();
-
-        
-        
-
+        MageDefence = GetComponent<Spawner>().Defence;
+        MageHitPoints = GetComponent<Spawner>().HP;
         healthBar.SetHealth(MageHitPoints);
         defBar.SetHealth(MageDefence);
     }
@@ -92,12 +91,15 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
     {
         if (MageDefence > 0)
         {
-            MageDefence = Action.currentDefence;
+            //MageDefence = Action.currentDefence;
+            MageDefence -= damage;
             GetComponent<Spawner>().Defence = MageDefence;
         }
         else
         {
-            MageHitPoints = Action.currentHealth;
+            //MageHitPoints = Action.currentHealth;
+            MageHitPoints -= damage;
+            Action.currentHealth = MageHitPoints;
             GetComponent<Spawner>().HP = MageHitPoints;
         }
     }

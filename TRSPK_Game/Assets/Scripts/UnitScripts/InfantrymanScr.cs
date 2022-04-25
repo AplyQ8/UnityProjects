@@ -38,6 +38,7 @@ public class InfantrymanScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         GetComponent<Spawner>().Cost = InfantrymanCost;
         GetComponent<Spawner>().Attack = InfantrymanAttack;
         GetComponent<Spawner>().HP = InfantrymanHitPoints;
+        GetComponent<Spawner>().Defence = InfantrymanDefence;
         Action.currentDefence = InfantrymanDefence;
         Action.currentHealth = InfantrymanHitPoints;
 
@@ -57,10 +58,9 @@ public class InfantrymanScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Cost.text = InfantrymanCost.ToString();
         Description.text = InfantrymanDescription.ToString();
 
+        InfantrymanHitPoints = GetComponent<Spawner>().HP;
+        InfantrymanDefence = GetComponent<Spawner>().Defence;
         
-        
-        
-
         healthBar.SetHealth(InfantrymanHitPoints);
         defBar.SetHealth(InfantrymanDefence);
     }
@@ -100,12 +100,15 @@ public class InfantrymanScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
     {
         if (InfantrymanDefence > 0)
         {
-            InfantrymanDefence = Action.currentDefence;
+            //InfantrymanDefence = Action.currentDefence;
+            InfantrymanDefence -= damage;
             GetComponent<Spawner>().Defence = InfantrymanDefence;
         }
         else
         {
-            InfantrymanHitPoints = Action.currentHealth;
+            //InfantrymanHitPoints = Action.currentHealth;
+            InfantrymanHitPoints -= damage;
+            Action.currentHealth = InfantrymanHitPoints;
             GetComponent<Spawner>().HP = InfantrymanHitPoints;
         }
     }

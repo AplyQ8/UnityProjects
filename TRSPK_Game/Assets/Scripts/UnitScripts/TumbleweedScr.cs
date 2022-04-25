@@ -41,7 +41,7 @@ public class TumbleweedScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         GetComponent<Spawner>().Cost = TumbleWeedCost;
         GetComponent<Spawner>().Attack = TumbleWeedAttack;
         GetComponent<Spawner>().HP = TumbleWeedHitPoints;
-        
+        GetComponent<Spawner>().Defence = TumbleWeedDefence;
         Action.currentDefence = TumbleWeedDefence;
         Action.currentHealth = TumbleWeedHitPoints;
 
@@ -59,10 +59,8 @@ public class TumbleweedScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Defence.text = TumbleWeedDefence.ToString();
         Cost.text = TumbleWeedCost.ToString();
         Description.text = TumbleWeedDescription.ToString();
-
-        
-        
-
+        TumbleWeedHitPoints = GetComponent<Spawner>().HP;
+        TumbleWeedDefence = GetComponent<Spawner>().Defence;
         healthBar.SetHealth(TumbleWeedHitPoints);
         defBar.SetHealth(TumbleWeedDefence);
 
@@ -94,12 +92,15 @@ public class TumbleweedScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
     {
         if (TumbleWeedDefence > 0)
         {
-            TumbleWeedDefence = Action.currentDefence;
+            //TumbleWeedDefence = Action.currentDefence;
+            TumbleWeedDefence -= damage;
             GetComponent<Spawner>().Defence = TumbleWeedDefence;
         }            
         else
         {
-            TumbleWeedHitPoints = Action.currentHealth;
+            //TumbleWeedHitPoints = Action.currentHealth;
+            TumbleWeedHitPoints -= damage;
+            Action.currentHealth = TumbleWeedHitPoints;
             GetComponent<Spawner>().HP = TumbleWeedHitPoints;
             
         }

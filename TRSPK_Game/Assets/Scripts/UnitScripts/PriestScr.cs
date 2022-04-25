@@ -41,7 +41,7 @@ public class PriestScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         GetComponent<Spawner>().Cost = PriestCost;
         GetComponent<Spawner>().Attack = PriestAttack;
         GetComponent<Spawner>().HP = PriestHitPoints;
-        
+        GetComponent<Spawner>().Defence = PriestDefence;
         Action.currentDefence = PriestDefence;
         Action.currentHealth = PriestHitPoints;
 
@@ -59,10 +59,9 @@ public class PriestScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Defence.text = PriestDefence.ToString();
         Cost.text = PriestCost.ToString();
         Description.text = PriestDescription.ToString();
+        PriestDefence = GetComponent<Spawner>().Defence;
+        PriestHitPoints = GetComponent<Spawner>().HP;
         
-        
-        
-
         healthBar.SetHealth(PriestHitPoints);
         defBar.SetHealth(PriestDefence);
     }
@@ -93,12 +92,15 @@ public class PriestScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
     {
         if (PriestDefence > 0)
         {
-            PriestDefence = Action.currentDefence;
+            //PriestDefence = Action.currentDefence;
+            PriestDefence -= damage;
             GetComponent<Spawner>().Defence = PriestDefence;
         }
         else
         {
-            PriestHitPoints = Action.currentHealth;
+            //PriestHitPoints = Action.currentHealth;
+            PriestHitPoints -= damage;
+            Action.currentHealth = PriestHitPoints;
             GetComponent<Spawner>().HP = PriestHitPoints;
         }
     }

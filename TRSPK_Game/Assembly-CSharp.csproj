@@ -36,10 +36,12 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets/Scripts/MomentoPattern/BattleCanvasScript.cs" />
      <Compile Include="Assets/Scripts/Factory/F_Knight.cs" />
      <Compile Include="Assets/Scripts/ScriptsForPooler/Spawner.cs" />
      <Compile Include="Assets/Scripts/Units/Priest.cs" />
      <Compile Include="Assets/Scripts/MenuScripts/DontDestroyScript.cs" />
+     <Compile Include="Assets/Scripts/MomentoPattern/MementoScript.cs" />
      <Compile Include="Assets/Scripts/CardScripts/ScaleScript.cs" />
      <Compile Include="Assets/Scripts/UnitScripts/BuffAvailabilityScript.cs" />
      <Compile Include="Assets/Scripts/BattleScripts/CopyingScript.cs" />
@@ -52,9 +54,11 @@
      <Compile Include="Assets/Scripts/Units/Infantryman.cs" />
      <Compile Include="Assets/Scripts/Factory/F_Tumbleweed.cs" />
      <Compile Include="Assets/Scripts/UnitScripts/KnightScr.cs" />
+     <Compile Include="Assets/Scripts/BattleScripts/TurnCountScript.cs" />
      <Compile Include="Assets/Scripts/MoneyScripts/money.cs" />
      <Compile Include="Assets/Scripts/UnitScripts/GettingInvisible.cs" />
      <Compile Include="Assets/Scripts/ScriptsForPooler/ObjectPooler.cs" />
+     <Compile Include="Assets/Scripts/UnitScripts/CloneCreatorScript.cs" />
      <Compile Include="Assets/Scripts/Units/Tumbleweed.cs" />
      <Compile Include="Assets/Scripts/BattleScripts/BattleProcessScript.cs" />
      <Compile Include="Assets/Scripts/ScriptsForSlots/DropPlaeScript.cs" />
@@ -81,7 +85,6 @@
      <Compile Include="Assets/Scripts/Units/Archer.cs" />
      <Compile Include="Assets/Scripts/Units/IUnit.cs" />
      <Compile Include="Assets/Scripts/UnitScripts/TumbleweedScr.cs" />
-     <Compile Include="Assets/Scripts/UnitScripts/CloneCreatorScript.cs" />
      <None Include="Assets/TextMesh Pro/Shaders/TMPro.cginc" />
      <None Include="Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets/TextMesh Pro/Shaders/TMP_Bitmap.shader" />

@@ -14,15 +14,6 @@ public class ActionScript : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        
-        if(currentDefence > 0)
-        {
-            currentDefence -= damage;
-        }
-        else
-        {
-            currentHealth -= damage;
-        }
         Damage.Invoke(damage);
         
         if(currentHealth <= 0)

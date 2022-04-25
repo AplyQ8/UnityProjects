@@ -40,6 +40,7 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
         GetComponent<Spawner>().Cost = ArcherCost;
         GetComponent<Spawner>().Attack = ArcherAttack;
         GetComponent<Spawner>().HP = ArcherHitPoints;
+        GetComponent<Spawner>().Defence = ArcherDefence;
         
         Action.currentDefence = ArcherDefence;
         Action.currentHealth = ArcherHitPoints;
@@ -57,10 +58,8 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Defence.text = ArcherDefence.ToString();
         Cost.text = ArcherCost.ToString();
         Description.text = ArcherDescription.ToString();
-
-        
-        
-
+        ArcherDefence = GetComponent<Spawner>().Defence;
+        ArcherHitPoints = GetComponent<Spawner>().HP;
         healthBar.SetHealth(ArcherHitPoints);
         defBar.SetHealth(ArcherDefence);
     }
@@ -93,13 +92,16 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
     {
         if (ArcherDefence > 0)
         {
-            ArcherDefence = Action.currentDefence;
+            //ArcherDefence = Action.currentDefence;
+            ArcherDefence -= damage;
             GetComponent<Spawner>().Defence = ArcherDefence;
             
         }
         else
         {
-            ArcherHitPoints = Action.currentHealth;
+            //ArcherHitPoints = Action.currentHealth;
+            ArcherHitPoints -= damage;
+            Action.currentHealth = ArcherHitPoints;
             GetComponent<Spawner>().HP = ArcherHitPoints;
         }
     }
@@ -142,8 +144,6 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
 
             units.Clear();
         }
-
-        
     }
 }
 

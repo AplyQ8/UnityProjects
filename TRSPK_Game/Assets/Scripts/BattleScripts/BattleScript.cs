@@ -6,15 +6,18 @@ public class BattleScript : MonoBehaviour
 {
     public GameObject playerField;
     public GameObject enemyField;
-    //public GameObject grave;
     System.Random rand = new System.Random();
     public int coin;
+    public static List<Memento> mementos;
+    public int turnBackCount;
+    public bool isDead;
+
 
     public void Awake()
     {
+        mementos = new List<Memento>();
         playerField = GameObject.Find("Field");
         enemyField = GameObject.Find("Field(Clone)");
-        //grave = GameObject.Find("DeadUnits");
         coin = rand.Next(0, 2);
         if(coin == 1)
         {
@@ -28,61 +31,63 @@ public class BattleScript : MonoBehaviour
 
     public void Fight()
     {
-        int playerUnit = CheckPlayerUnits(0);
+        isDead = false;
+        int playerUnit = CheckPlayerUnits(0, playerField);
         if (playerUnit == -1)
         {
             Debug.Log("No units on Player field!");
             return;
         }
-        int enemyUnit = CheckEnemyUnits(enemyField.transform.childCount - 1);
+        int enemyUnit = CheckPlayerUnits(0, enemyField);
         if (enemyUnit == -1)
         {
             Debug.Log("No units on enemy field!");
             return;
         }
-
-        if(coin%2 == 1)
+        while(!isDead)
         {
-            Duel(playerField.transform.GetChild(playerUnit).GetChild(0).gameObject, enemyField.transform.GetChild(enemyUnit).GetChild(0).gameObject);
-            if(enemyField.transform.GetChild(enemyUnit).GetChild(0).GetComponent<Spawner>().HP <= 0)
+            if(coin%2 == 1)
             {
-                LoopForCallback(playerUnit + 1, playerField.transform.childCount, playerField, enemyField);
+                Duel(playerField.transform.GetChild(playerUnit).GetChild(0).gameObject, enemyField.transform.GetChild(enemyUnit).GetChild(0).gameObject);
+                if(enemyField.transform.GetChild(enemyUnit).GetChild(0).GetComponent<Spawner>().HP <= 0)
+                {
+                    isDead = true;
+                    LoopForCallback(playerUnit + 1, playerField.transform.childCount, playerField, enemyField);
+                }
             }
-        }
-        else
-        {
-            Duel(enemyField.transform.GetChild(enemyUnit).GetChild(0).gameObject, playerField.transform.GetChild(playerUnit).GetChild(0).gameObject);
-            if(playerField.transform.GetChild(playerUnit).GetChild(0).GetComponent<Spawner>().HP <= 0)
+            else
             {
-                LoopForCallback(0, enemyUnit, enemyField, playerField);
+                Duel(enemyField.transform.GetChild(enemyUnit).GetChild(0).gameObject, playerField.transform.GetChild(playerUnit).GetChild(0).gameObject);
+                if(playerField.transform.GetChild(playerUnit).GetChild(0).GetComponent<Spawner>().HP <= 0)
+                {
+                    isDead = true;
+                    LoopForCallback(enemyUnit + 1, enemyField.transform.childCount, enemyField, playerField);
+                }
             }
+            coin++;
         }
-        coin ++;
+        
+    }
+    public void BackTurn()
+    {
+        
     }
 
 
 
 
-    private int CheckPlayerUnits(int playerUnit)
+    private int CheckPlayerUnits(int playerUnit, GameObject field)
     {
-        for(int i = playerUnit; i < playerField.transform.childCount; i++)
+        for(int i = playerUnit; i < field.transform.childCount; i++)
         {
-            if (playerField.transform.GetChild(i).childCount > 0)
+            if (field.transform.GetChild(i).childCount > 0)
             {
+                //Debug.Log(i);
                 return i;
             }
         }
         return -1;
     }
-    private int CheckEnemyUnits(int playerUnit)
-    {
-        for (int i = playerUnit; i >= 0 ; i--)
-        {
-            if (enemyField.transform.GetChild(i).childCount > 0) return i;
-        }
-        return -1;
-    }
-
     private void Duel(GameObject playerUnit, GameObject enemyUnit)
     {
         

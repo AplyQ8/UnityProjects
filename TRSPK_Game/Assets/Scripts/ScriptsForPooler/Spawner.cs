@@ -10,7 +10,6 @@ public class Spawner : MonoBehaviour
     public int Attack;
     public int HP;
     public int Defence;
-    public bool isInFight = false;
     
     //public int health;
     
@@ -26,8 +25,30 @@ public class Spawner : MonoBehaviour
         CardScr card = GetComponent<CardScr>();
         objectPooler.SpawnFromPool(unitName, card.defaultPos, Quaternion.identity, card.parent);
     }
-    /*public void Delete()
-    {
-        CardScr card = GetComponent<CardScr>();
-    }*/
+
+    // public class Memento
+    // {
+    //     int attack;
+    //     int health;
+    //     int def;
+    //     public Memento(int _attack, int _hp, int _def)
+    //     {
+    //         Attack = _attack;
+    //         Health = _hp;
+    //         Def = _def;
+    //     }
+    //     public int Attack
+    //     {
+    //         get => this.attack;
+    //     }
+    //     public int Health
+    //     {
+    //         get => this.health;
+    //     }
+    //     public int Def
+    //     {
+    //         get => this.def;
+    //     }
+    // }
+    
 }
