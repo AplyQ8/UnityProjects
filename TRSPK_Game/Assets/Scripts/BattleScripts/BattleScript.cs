@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BattleScript : MonoBehaviour
 {
@@ -8,16 +10,22 @@ public class BattleScript : MonoBehaviour
     public GameObject enemyField;
     System.Random rand = new System.Random();
     public int coin;
-    public static List<Memento> mementos;
+    public List<Memento> eMementos;
+    public List<Memento> pMementos;
     public int turnBackCount;
     public bool isDead;
+    public GameObject pFieldParent;
+    public GameObject eFieldParent;
 
 
     public void Awake()
     {
-        mementos = new List<Memento>();
+        eMementos = new List<Memento>();
+        pMementos = new List<Memento>();
         playerField = GameObject.Find("Field");
+        playerField.GetComponent<PlayerField>().field = GameObject.Find("Field");
         enemyField = GameObject.Find("Field(Clone)");
+        enemyField.GetComponent<PlayerField>().field = GameObject.Find("Field(Clone)");
         coin = rand.Next(0, 2);
         if(coin == 1)
         {
@@ -27,10 +35,36 @@ public class BattleScript : MonoBehaviour
         {
             Debug.Log("First turn is after enemy!");
         }
+        pFieldParent = GameObject.Find("PlayerSide");
+        eFieldParent = GameObject.Find("EnemySide");
+        
+
+    }
+    
+    public void Ready()
+    {
+        playerField.GetComponent<PlayerField>().field = Instantiate(playerField, playerField.transform.position, playerField.transform.rotation, playerField.transform.parent);
+        playerField.GetComponent<PlayerField>().field.SetActive(false);
+        playerField.GetComponent<PlayerField>().SaveTo(pMementos);
+        enemyField.GetComponent<PlayerField>().field = Instantiate(enemyField, enemyField.transform.position, enemyField.transform.rotation, enemyField.transform.parent);
+        enemyField.GetComponent<PlayerField>().field.SetActive(false);
+        enemyField.GetComponent<PlayerField>().SaveTo(eMementos);
     }
 
     public void Fight()
     {
+        
+        if(turnBackCount < GameObject.Find("TurnCounter").GetComponent<TurnCountScript>().turnCount)
+        {
+            pMementos[turnBackCount]._field.SetActive(false);
+            eMementos[turnBackCount]._field.SetActive(false);
+            // playerField = GameObject.Find("Field");
+            // enemyField = GameObject.Find("Field(Clone");
+            playerField.SetActive(true);
+            enemyField.SetActive(true);
+            pFieldParent.GetComponent<ScrollRect>().content = playerField.GetComponent<RectTransform>();
+            eFieldParent.GetComponent<ScrollRect>().content = enemyField.GetComponent<RectTransform>();
+        }
         isDead = false;
         int playerUnit = CheckPlayerUnits(0, playerField);
         if (playerUnit == -1)
@@ -66,11 +100,52 @@ public class BattleScript : MonoBehaviour
             }
             coin++;
         }
+        GameObject.Find("TurnCounter").GetComponent<TurnCountScript>().turnCount++;
+        turnBackCount = GameObject.Find("TurnCounter").GetComponent<TurnCountScript>().turnCount;
+        
+        
         
     }
-    public void BackTurn()
+
+    public void SaveToLists()
     {
+        var tempObj = Instantiate(playerField, playerField.transform.position, playerField.transform.rotation, playerField.transform.parent);
+        playerField.GetComponent<PlayerField>().field = tempObj;
+        playerField.GetComponent<PlayerField>().SaveTo(pMementos);
+        playerField.GetComponent<PlayerField>().field.SetActive(false);
         
+        var tempObj1 = Instantiate(enemyField, enemyField.transform.position, enemyField.transform.rotation, enemyField.transform.parent);
+        enemyField.GetComponent<PlayerField>().field = tempObj1;
+        enemyField.GetComponent<PlayerField>().SaveTo(eMementos);
+        enemyField.GetComponent<PlayerField>().field.SetActive(false);
+    }
+    public void Undo()
+    {
+        pMementos[turnBackCount]._field.SetActive(false);
+        eMementos[turnBackCount]._field.SetActive(false);
+        playerField.SetActive(false);
+        enemyField.SetActive(false);
+        turnBackCount -= 1;
+        pMementos[turnBackCount]._field.SetActive(true);
+        eMementos[turnBackCount]._field.SetActive(true);
+        pFieldParent.GetComponent<ScrollRect>().content = pMementos[turnBackCount]._field.GetComponent<RectTransform>();
+        eFieldParent.GetComponent<ScrollRect>().content = eMementos[turnBackCount]._field.GetComponent<RectTransform>();
+        // playerField = pMementos[turnBackCount]._field;
+        // enemyField = eMementos[turnBackCount]._field;
+    }
+    public void Redo()
+    {
+        pMementos[turnBackCount]._field.SetActive(false);
+        eMementos[turnBackCount]._field.SetActive(false);
+        playerField.SetActive(false);
+        enemyField.SetActive(false);
+        turnBackCount += 1;
+        pMementos[turnBackCount]._field.SetActive(true);
+        eMementos[turnBackCount]._field.SetActive(true);
+        pFieldParent.GetComponent<ScrollRect>().content = pMementos[turnBackCount]._field.GetComponent<RectTransform>();
+        eFieldParent.GetComponent<ScrollRect>().content = eMementos[turnBackCount]._field.GetComponent<RectTransform>();
+        // playerField = pMementos[turnBackCount]._field;
+        // enemyField = eMementos[turnBackCount]._field;
     }
 
 

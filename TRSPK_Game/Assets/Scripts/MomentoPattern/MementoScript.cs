@@ -4,22 +4,16 @@ using UnityEngine;
 
 public class Memento
 {
-    public GameObject playerField;
-    public GameObject enemyField;
-
-    public Memento(GameObject _pField, GameObject _eField)
+   public GameObject _field;
+        
+    public Memento(GameObject _pField)
     {
-        playerField = _pField;
-        enemyField = _eField;
+        _field = _pField;
     }
 
-    public GameObject Player
+    public GameObject _Field
     {
-        get => this.playerField;
-    }
-    public GameObject Enemy
-    {
-        get => this.enemyField;
+        get => this._field;
     }
     
 }
