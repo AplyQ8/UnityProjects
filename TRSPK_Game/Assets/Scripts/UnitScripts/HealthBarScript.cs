@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,14 @@ using UnityEngine.UI;
 public class HealthBarScript : MonoBehaviour
 {
     public Slider slider;
+    private CardScr _cardScr;
+    private CanvasGroup _canvas;
     //public Gradient gradient;
+    private void Awake()
+    {
+        _cardScr = GetComponentInParent<CardScr>();
+        _canvas = GetComponent<CanvasGroup>();
+    }
 
     public void SetMaxHealth(int health)
     {
@@ -22,7 +30,7 @@ public class HealthBarScript : MonoBehaviour
 
     private void Update()
     {
-        if (GetComponentInParent<CardScr>().isDropped)
-            GetComponent<CanvasGroup>().alpha = 1f;
+        if (_cardScr.isDropped)
+            _canvas.alpha = 1f;
     }
 }

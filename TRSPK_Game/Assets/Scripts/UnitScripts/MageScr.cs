@@ -1,10 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Random = System.Random;
 using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
 
-public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
+public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler, IUnit
 {
     public TextMeshProUGUI Name;
     public TextMeshProUGUI Attack;
@@ -15,54 +17,63 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
 
     public HealthBarScript healthBar;
     public DefenceBarScript defBar;
-
-    Mage mage = new Mage();
-    F_Mage fabric = new F_Mage();
+    
+    //F_Mage fabric = new F_Mage();
     ActionScript Action;
+    private Spawner spawner;
+    private Random rand = new Random();
+    [SerializeField] int MageId = 3;
+    [SerializeField] string MageName = "Mage";
+    [SerializeField] int MageHitPoints = 25;
+    [SerializeField] int MageAttack = 70;
+    [SerializeField] int MageDefence = 20;
+    [SerializeField] int MageCost = 60;
+    [SerializeField] private string MageDescription;
+    [SerializeField] private int _maxHealth = 25;
+    [SerializeField] private int _maxDef = 20;
 
-    int MageId;
-    string MageName;
-    int MageHitPoints;
-    int MageAttack;
-    int MageDefence;
-    int MageCost;
-    string MageDescription;
+    public int UnitId { get { return MageId; } set { MageId = value; } }
+    public string UnitName { get { return MageName; } set { MageName = value; } }
+    public int UnitHitPoints { get { return MageHitPoints; } set { MageHitPoints = value; } }
+    public int UnitAttack { get { return MageAttack; } set { MageAttack = value; } }
+    public int UnitDefence { get { return MageDefence; } set { MageDefence = value; } }
+    public int UnitCost { get { return MageCost; } set { MageCost = value; } }
 
     private void Awake()
     {
         Action = GetComponent<ActionScript>();
-        MageId = mage.Id;
-        MageName = mage.Name;
-        MageHitPoints = mage.HitPoints;
-        MageAttack = mage.Attack;
-        MageDefence = mage.Defence;
-        MageCost = mage.Cost;
-        GetComponent<Spawner>().Cost = MageCost;
-        GetComponent<Spawner>().Attack = MageAttack;
-        GetComponent<Spawner>().HP = MageHitPoints;
-        GetComponent<Spawner>().Defence = MageDefence;
+        spawner = GetComponent<Spawner>();
+        GetComponent<Spawner>().Cost = UnitCost;
+        GetComponent<Spawner>().Attack = UnitAttack;
+        GetComponent<Spawner>().HP = UnitHitPoints;
+        GetComponent<Spawner>().Defence = UnitDefence;
         
-        Action.currentDefence = MageDefence;
-        Action.currentHealth = MageHitPoints;
+        Action.currentDefence = UnitDefence;
+        Action.currentHealth = UnitHitPoints;
 
         MageDescription = "Clone nearby units with some chance";
-
-        healthBar.SetMaxHealth(MageHitPoints);
-        defBar.SetMaxHealth(MageDefence);
+        
+        
+        spawner._maxHealth = _maxHealth;
+        spawner._maxDef = _maxDef;
+        healthBar.SetMaxHealth(_maxHealth);
+        defBar.SetMaxHealth(_maxDef);
     }
 
     private void Update()
     {
-        Name.text = MageName.ToString();
-        Attack.text = MageAttack.ToString();
-        Health.text = MageHitPoints.ToString();
-        Defence.text = MageDefence.ToString();
-        Cost.text = MageCost.ToString();
+        Name.text = UnitName.ToString();
+        Attack.text = UnitAttack.ToString();
+        Health.text = UnitHitPoints.ToString();
+        Defence.text = UnitDefence.ToString();
+        Cost.text = UnitCost.ToString();
         Description.text = MageDescription.ToString();
-        MageDefence = GetComponent<Spawner>().Defence;
-        MageHitPoints = GetComponent<Spawner>().HP;
-        healthBar.SetHealth(MageHitPoints);
-        defBar.SetHealth(MageDefence);
+        UnitDefence = spawner.Defence;
+        UnitHitPoints = spawner.HP;
+        healthBar.SetHealth(UnitHitPoints);
+        defBar.SetHealth(UnitDefence);
+        healthBar.SetMaxHealth(spawner._maxHealth);
+        defBar.SetMaxHealth(spawner._maxDef);
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -75,32 +86,32 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         if (card.isDropped)
         {
             SlotScript slot = GetComponentInParent<SlotScript>();
-            GameObject.Find("Array").GetComponent<ArrayUnits>().units[slot.cellX, slot.cellY] = fabric.Create();
+            //GameObject.Find("Array").GetComponent<ArrayUnits>().units[slot.cellX, slot.cellY] = fabric.Create();
             //units.units[slot.cellX, slot.cellY] = fabric.Create();
 
             SpendMoneyEvent sme = new SpendMoneyEvent();
-            sme.OnSpendMoney(MageCost);
+            sme.OnSpendMoney(UnitCost);
         }
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
         LocalCostScript lc = GameObject.Find("LocalCost").GetComponent<LocalCostScript>();
-        lc.cost = MageCost;
+        lc.cost = UnitCost;
     }
     public void TakeDamage(int damage)
     {
-        if (MageDefence > 0)
+        if (UnitDefence > 0)
         {
             //MageDefence = Action.currentDefence;
-            MageDefence -= damage;
-            GetComponent<Spawner>().Defence = MageDefence;
+            UnitDefence -= damage;
+            GetComponent<Spawner>().Defence = UnitDefence;
         }
         else
         {
             //MageHitPoints = Action.currentHealth;
-            MageHitPoints -= damage;
-            Action.currentHealth = MageHitPoints;
-            GetComponent<Spawner>().HP = MageHitPoints;
+            UnitHitPoints -= damage;
+            Action.currentHealth = UnitHitPoints;
+            GetComponent<Spawner>().HP = UnitHitPoints;
         }
     }
     private void OnEnable() {
@@ -118,8 +129,36 @@ public class MageScr : MonoBehaviour, IEndDragHandler, IBeginDragHandler
         gameObject.SetActive(false);
         Destroy(gameObject);
     }
-    public void Ultimate(GameObject field, GameObject enemyField)
+    public void Ultimate(GameObject field, GameObject enemyField, int index, TMP_Text textBox)
     {
+        GameObject neigbour1 = null;
+        GameObject neigbour2 = null;
+        List<GameObject> unitsToClone = new List<GameObject>();
         
+        if (index < field.transform.childCount - 1 && 
+            field.transform.GetChild(index + 1).transform.childCount > 0 &&
+            field.transform.GetChild(index + 1).GetChild(0).gameObject.activeSelf)
+        {
+            neigbour1 = field.transform.GetChild(index + 1).GetChild(0).gameObject;
+            unitsToClone.Add(neigbour1);
+        }
+        if (index > 0 && 
+            field.transform.GetChild(index - 1).transform.childCount > 0 &&
+            field.transform.GetChild(index - 1).GetChild(0).gameObject.activeSelf)
+        {
+            neigbour2 = field.transform.GetChild(index - 1).GetChild(0).gameObject;
+            unitsToClone.Add(neigbour2);
+        }
+
+        int coin = rand.Next(0, 101);
+        if (coin <= 30)
+        {
+            int unit = rand.Next(0, unitsToClone.Count);
+            ActionScript clone = unitsToClone[unit].GetComponent<ActionScript>();
+            clone?.ToClone();
+            field.GetComponent<RectTransform>().sizeDelta = new Vector2(field.GetComponent<RectTransform>().rect.width + 100,
+                field.GetComponent<RectTransform>().rect.height + 100);
+            textBox.text += $"Mage has cloned {unitsToClone[unit].GetComponent<Spawner>().unitName}!\n"; 
+        }
     }
 }

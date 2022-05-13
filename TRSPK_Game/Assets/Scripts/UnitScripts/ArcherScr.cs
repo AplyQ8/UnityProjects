@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using TMPro;
 using System.Collections.Generic;
 
-public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
+public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler, IUnit, IPrototype, IHeal
 {
     public TextMeshProUGUI Name;
     public TextMeshProUGUI Attack;
@@ -15,58 +15,60 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
 
     public HealthBarScript healthBar;
     public DefenceBarScript defBar;
-
-    Archer arch = new Archer();
+    
     ActionScript Action;
-
-    int ArcherId ;
-    string ArcherName ;
-    int ArcherHitPoints ;
-    int ArcherAttack ;
-    int ArcherDefence ;
-    int ArcherCost ;
-    string ArcherDescription;
-
+    private Spawner spawner;
+    
+    [SerializeField] int ArcherId = 2;
+    [SerializeField] string ArcherName = "Archer";
+    [SerializeField] int ArcherHitPoints = 25;
+    [SerializeField] int ArcherAttack = 30;
+    [SerializeField] int ArcherDefence = 15;
+    [SerializeField] int ArcherCost = 20;
+    [SerializeField] private int _maxHealth = 25;
+    [SerializeField] private int _maxDef = 15;
+    [SerializeField] private string ArcherDescription;
+    public int UnitId { get { return ArcherId; } set { ArcherId = value; } }
+    public string UnitName { get { return ArcherName; } set { ArcherName = value; } }
+    public int UnitHitPoints { get { return ArcherHitPoints; } set { ArcherHitPoints = value; } }
+    public int UnitAttack { get { return ArcherAttack; } set { ArcherAttack = value; } }
+    public int UnitDefence { get { return ArcherDefence; } set { ArcherDefence = value; } }
+    public int UnitCost { get { return ArcherCost; } set { ArcherCost = value; } }
+    
     private void Awake()
     {
         Action = GetComponent<ActionScript>();
+        spawner = GetComponent<Spawner>();
+        GetComponent<Spawner>().Cost = UnitCost;
+        GetComponent<Spawner>().Attack = UnitAttack;
+        GetComponent<Spawner>().HP = UnitHitPoints;
+        GetComponent<Spawner>().Defence = UnitDefence;
         
-        ArcherId = arch.Id;
-        ArcherName = arch.Name;
-        ArcherHitPoints = arch.HitPoints;
-        ArcherAttack = arch.Attack;
-        ArcherDefence = arch.Defence;
-        ArcherCost = arch.Cost;
-        GetComponent<Spawner>().Cost = ArcherCost;
-        GetComponent<Spawner>().Attack = ArcherAttack;
-        GetComponent<Spawner>().HP = ArcherHitPoints;
-        GetComponent<Spawner>().Defence = ArcherDefence;
-        
-        Action.currentDefence = ArcherDefence;
-        Action.currentHealth = ArcherHitPoints;
+        Action.currentDefence = UnitDefence;
+        Action.currentHealth = UnitHitPoints;
 
         ArcherDescription = "Shoots another random unit with some chance";
-
-        healthBar.SetMaxHealth(ArcherHitPoints);
-        defBar.SetMaxHealth(ArcherDefence);
+        
+        spawner._maxHealth = _maxHealth;
+        spawner._maxDef = _maxDef;
+        healthBar.SetMaxHealth(_maxHealth);
+        defBar.SetMaxHealth(_maxDef);
     }
     private void Update()
     {
-        Name.text = ArcherName.ToString();
-        Attack.text = ArcherAttack.ToString();
-        Health.text = ArcherHitPoints.ToString();
-        Defence.text = ArcherDefence.ToString();
-        Cost.text = ArcherCost.ToString();
+        Name.text = UnitName.ToString();
+        Attack.text = UnitAttack.ToString();
+        Health.text = UnitHitPoints.ToString();
+        Defence.text = UnitDefence.ToString();
+        Cost.text = UnitCost.ToString();
         Description.text = ArcherDescription.ToString();
-        ArcherDefence = GetComponent<Spawner>().Defence;
-        ArcherHitPoints = GetComponent<Spawner>().HP;
-        healthBar.SetHealth(ArcherHitPoints);
-        defBar.SetHealth(ArcherDefence);
+        UnitDefence = spawner.Defence;
+        UnitHitPoints = spawner.HP;
+        healthBar.SetHealth(UnitHitPoints);
+        defBar.SetHealth(UnitDefence);
+        healthBar.SetMaxHealth(spawner._maxHealth);
+        defBar.SetMaxHealth(spawner._maxDef);
     }
-
-
-    F_Archer fabric = new F_Archer();
-
     
     public void OnEndDrag(PointerEventData eventData)
     {
@@ -76,33 +78,33 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
         if (card.isDropped)
         {
             SlotScript slot = GetComponentInParent<SlotScript>();
-            GameObject.Find("Array").GetComponent<ArrayUnits>().units[slot.cellX, slot.cellY] = fabric.Create();
+            //GameObject.Find("Array").GetComponent<ArrayUnits>().units[slot.cellX, slot.cellY] = fabric.Create();
             //units.units[slot.cellX, slot.cellY] = fabric.Create();
             SpendMoneyEvent sme = new SpendMoneyEvent();
-            sme.OnSpendMoney(ArcherCost);
+            sme.OnSpendMoney(UnitCost);
         }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
         LocalCostScript lc = GameObject.Find("LocalCost").GetComponent<LocalCostScript>();
-        lc.cost = ArcherCost;
+        lc.cost = UnitCost;
     }
     public void TakeDamage(int damage)
     {
-        if (ArcherDefence > 0)
+        if (UnitDefence > 0)
         {
             //ArcherDefence = Action.currentDefence;
-            ArcherDefence -= damage;
-            GetComponent<Spawner>().Defence = ArcherDefence;
+            UnitDefence -= damage;
+            GetComponent<Spawner>().Defence = UnitDefence;
             
         }
         else
         {
             //ArcherHitPoints = Action.currentHealth;
-            ArcherHitPoints -= damage;
-            Action.currentHealth = ArcherHitPoints;
-            GetComponent<Spawner>().HP = ArcherHitPoints;
+            UnitHitPoints -= damage;
+            Action.currentHealth = UnitHitPoints;
+            GetComponent<Spawner>().HP = UnitHitPoints;
         }
     }
 
@@ -110,12 +112,16 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
         Action.Damage += TakeDamage;
         Action.Killed += Kill;
         Action.SpecAction += Ultimate;
-        
+        Action.Clone += Clone;
+        Action.Heal += Heal;
+
     }
     private void OnDisable() {
         Action.Damage -= TakeDamage;
         Action.Killed -= Kill;
         Action.SpecAction -= Ultimate;
+        Action.Clone -= Clone;
+        Action.Heal -= Heal;
     }
 
     public void Kill()
@@ -123,7 +129,7 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
         gameObject.SetActive(false);
         Destroy(gameObject);
     }
-    public void Ultimate(GameObject field, GameObject enemyField)
+    public void Ultimate(GameObject field, GameObject enemyField, int index, TMP_Text textBox)
     {
         System.Random rand = new System.Random();
         int coin = rand.Next(0, 101);
@@ -139,11 +145,29 @@ public class ArcherScr:  MonoBehaviour, IEndDragHandler, IBeginDragHandler
             }
             GameObject unit = units[rand.Next(0, units.Count)];
             ActionScript enemyAction = unit.GetComponent<ActionScript>();
-            enemyAction?.TakeDamage(ArcherAttack);
-            Debug.Log($"Archers action was activated and dealed {ArcherAttack} damage a {unit.GetComponent<Spawner>().unitName}");
+            enemyAction?.TakeDamage(UnitAttack);
+            textBox.text +=
+                $"Archers action was activated and dealed {UnitAttack} damage a {unit.GetComponent<Spawner>().unitName}\n";
 
             units.Clear();
         }
     }
+
+
+    public void Clone()
+    {
+        GameObject _parent = gameObject.transform.parent.gameObject;
+        GameObject newArcher = Instantiate(_parent, 
+            gameObject.transform.position,
+            gameObject.transform.rotation,
+            _parent.transform.parent);
+    }
+    public void Heal(int heal)
+    {
+        UnitHitPoints += heal;
+        if (UnitHitPoints > spawner._maxHealth)
+            UnitHitPoints = spawner._maxHealth;
+    }
+    
 }
 

@@ -59,16 +59,21 @@ public class CardScr : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
         transform.SetParent(DefaultParent);
 
         
-        if(isDropped == true)
+        // if(isDropped == true)
+        // {
+        //     GetComponent<CanvasGroup>().blocksRaycasts = false;
+        //     
+        // }
+        // else
+        // {
+        //     GetComponent<CanvasGroup>().blocksRaycasts = true;
+        // }
+        if (isDropped)
         {
-            GetComponent<CanvasGroup>().blocksRaycasts = false;
-            
+            GetComponent<DeleteFromSlotScript>().enabled = true;
+            GetComponent<ScaleScript>().enabled = false;
         }
-        else
-        {
-            GetComponent<CanvasGroup>().blocksRaycasts = true;
-        }
-
+        GetComponent<CanvasGroup>().blocksRaycasts = true;
         transform.SetSiblingIndex(TempCardGO.transform.GetSiblingIndex());
 
         TempCardGO.transform.SetParent(GameObject.Find("Canvas").transform);

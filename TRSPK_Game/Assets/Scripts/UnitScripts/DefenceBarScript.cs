@@ -6,8 +6,14 @@ using UnityEngine.UI;
 public class DefenceBarScript : MonoBehaviour
 {
     public Slider slider;
+    private CardScr _cardScr;
+    private CanvasGroup _canvas;
     //public Gradient gradient;
-
+    private void Awake()
+    {
+        _cardScr = GetComponentInParent<CardScr>();
+        _canvas = GetComponent<CanvasGroup>();
+    }
     public void SetMaxHealth(int health)
     {
         slider.maxValue = health;
@@ -22,7 +28,7 @@ public class DefenceBarScript : MonoBehaviour
 
     private void Update()
     {
-        if (GetComponentInParent<CardScr>().isDropped)
-            GetComponent<CanvasGroup>().alpha = 1f;
+        if (_cardScr.isDropped)
+            _canvas.alpha = 1f;
     }
 }

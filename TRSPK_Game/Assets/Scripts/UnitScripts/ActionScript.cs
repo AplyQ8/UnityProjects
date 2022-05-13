@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using TMPro;
 
 public class ActionScript : MonoBehaviour
 {
     public event Action<int> Damage = delegate { };
     public event Action Killed = delegate { };
-    public event Action<GameObject, GameObject> SpecAction = delegate { };
+    public event Action Clone = delegate { };
+    public event Action<GameObject, GameObject, int, TMP_Text> SpecAction = delegate { };
+    public event Action<int> Heal = delegate {  };
 
     public int currentHealth;
     public int currentDefence;
@@ -26,9 +29,19 @@ public class ActionScript : MonoBehaviour
     {
         Killed.Invoke();
     }
-    public void Ultimate(GameObject field, GameObject enemyField)
+    public void Ultimate(GameObject field, GameObject enemyField, int index, TMP_Text textBox)
     {
-        SpecAction.Invoke(field, enemyField);
+        SpecAction.Invoke(field, enemyField, index, textBox);
+    }
+
+    public void ToClone()
+    {
+        Clone.Invoke();
+    }
+
+    public void HealUnit(int amount)
+    {
+        Heal.Invoke(amount);
     }
 
 }

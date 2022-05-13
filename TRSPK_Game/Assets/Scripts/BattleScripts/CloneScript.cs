@@ -6,7 +6,10 @@ public class CloneScript : MonoBehaviour
 {
     private void Start()
     {
-        GameObject newField = Instantiate(GameObject.Find("Field"));
+        GameObject strategy = GameObject.Find("Strategy");
+        Context context = strategy.GetComponent<Context>();
+        context.Execute();
+        GameObject newField = Instantiate(GameObject.Find("FieldScroll"));
         
         //newField.SetActive(false);
         newField.transform.SetParent(GameObject.Find("Canvas").transform);

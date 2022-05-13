@@ -10,6 +10,8 @@ public class Spawner : MonoBehaviour
     public int Attack;
     public int HP;
     public int Defence;
+    public int _maxHealth;
+    public int _maxDef;
     
     //public int health;
     

@@ -15,7 +15,9 @@ class EnemyFieldGeneration : MonoBehaviour
     private List<GameObject> Slots = new List<GameObject>();
     private void Start()
     {
-        enemy = GameObject.Find("Field(Clone)")/*.transform.GetChild(0).gameObject*/;
+        GameObject field = GameObject.Find("FieldScroll(Clone)");
+        //enemy = GameObject.Find("FieldScroll(Clone)")/*.transform.GetChild(0).gameObject*/;
+        enemy = field.transform.GetChild(0).gameObject;
         possibleCards = GameObject.Find("Hand");
         money = GameObject.Find("Money").GetComponent<money>().origMoney;
         FillingList();

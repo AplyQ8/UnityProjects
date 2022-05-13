@@ -7,7 +7,8 @@ public class CopyingScript : MonoBehaviour
 {
     public string pField;
     public GameObject ActiveSide;
-    private void Start()
+    [SerializeField] private GameObject _battleProcess;
+    private void Awake()
     {
         GameObject playerField = GameObject.Find(pField);
         //GameObject playerSide = GameObject.Find("PlayerSide");
@@ -15,12 +16,18 @@ public class CopyingScript : MonoBehaviour
         {
             playerField.GetComponent<Transform>().transform.SetParent(ActiveSide.GetComponent<Transform>());
             playerField.GetComponent<Transform>().transform.position = ActiveSide.GetComponent<Transform>().transform.position;
+            playerField.GetComponent<RectTransform>().sizeDelta = new Vector2(
+                ActiveSide.GetComponent<RectTransform>().rect.width,
+                ActiveSide.GetComponent<RectTransform>().rect.height);
             ActiveSide.GetComponent<ScrollRect>().content = playerField.GetComponent<RectTransform>();
+            //playerField.GetComponent<RectTransform>().anchoredPosition = 
 
         }
         else
         {
             Debug.LogWarning("Object have not found");
         }
+
+        _battleProcess.SetActive(true);
     }
 }

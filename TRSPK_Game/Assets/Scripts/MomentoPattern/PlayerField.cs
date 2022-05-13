@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerField : MonoBehaviour
 {
@@ -13,15 +14,12 @@ public class PlayerField : MonoBehaviour
         Debug.Log("Saved! Count: " + collection.Count);
 
     }
-    public void RestoreState(Memento state, GameObject FIELD) // передавать текущие field'ы, присваивать State field'ам parent& position переданных
+    public void RestoreState(Memento state, GameObject parent) // передавать текущие field'ы, присваивать State field'ам parent& position переданных
     {
-        //this.canvas = state.Canvas;
-        //this.canvas.SetActive(true);
-        // field = state._field;
-        // field.SetActive(true);
-        // Debug.Log("Field was replaced");
-        FIELD = state._field;
-
+        field.SetActive(false);
+        //_field = state._field;
+        state._field.SetActive(true);
+        parent.GetComponent<ScrollRect>().content = state._field.GetComponent<RectTransform>();
     }
     
 }

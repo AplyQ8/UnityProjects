@@ -12,8 +12,15 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/76b9a622300249dcb97e945c5c8cc43b157200/20/562f5e93/Object.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/76b9a622300249dcb97e945c5c8cc43b157200/35/58d3df27/UnityEvent.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/76b9a622300249dcb97e945c5c8cc43b157200/38/a2b6ce43/InvokableCall`1.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/76b9a622300249dcb97e945c5c8cc43b157200/57/50d9c447/RectTransform.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/76b9a622300249dcb97e945c5c8cc43b157200/b5/9c65f0a6/InvokableCall.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/76b9a622300249dcb97e945c5c8cc43b157200/db/9b44e133/GameObject.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8516445456524a6cb20c4b3b7de67982468a00/4e/14567a90/NullReferenceException.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@1.0.0/Runtime/EventSystem/ExecuteEvents.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@1.0.0/Runtime/EventSystem/InputModules/StandaloneInputModule.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@1.0.0/Runtime/UI/Core/Button.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -81,6 +88,28 @@
       <workItem from="1651151787467" duration="17000" />
       <workItem from="1651152054311" duration="5548000" />
       <workItem from="1651241778338" duration="856000" />
+      <workItem from="1651305249810" duration="8360000" />
+      <workItem from="1651330712221" duration="55000" />
+      <workItem from="1651360178610" duration="368000" />
+      <workItem from="1651483577979" duration="6740000" />
+      <workItem from="1651601684567" duration="465000" />
+      <workItem from="1651602262245" duration="929000" />
+      <workItem from="1651641282469" duration="3305000" />
+      <workItem from="1651657028569" duration="3844000" />
+      <workItem from="1651693494191" duration="2182000" />
+      <workItem from="1651826309041" duration="13554000" />
+      <workItem from="1651873488316" duration="1433000" />
+      <workItem from="1651919809033" duration="2611000" />
+      <workItem from="1651945753434" duration="1871000" />
+      <workItem from="1652007160810" duration="2929000" />
+      <workItem from="1652103598469" duration="9251000" />
+      <workItem from="1652124285714" duration="1847000" />
+      <workItem from="1652175305142" duration="3357000" />
+      <workItem from="1652212672501" duration="1436000" />
+      <workItem from="1652246887357" duration="13547000" />
+      <workItem from="1652275615619" duration="1199000" />
+      <workItem from="1652354104678" duration="9430000" />
+      <workItem from="1652430310869" duration="3692000" />
     </task>
     <servers />
   </component>
